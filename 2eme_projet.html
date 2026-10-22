@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portail de Dépôt de Projets Universitaires</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Anti-Zoom automatique iOS sur focus d'input */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+        /* Touch Targets minimums */
+        .touch-btn {
+            min-height: 44px;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 99px;
+        }
+        /* Animations Bottom Sheet */
+        .bottom-sheet {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-full flex flex-col justify-between antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- HEADER TOP (INCLUDES TOP NAVIGATION SWITCHER FOR ALL DEVICES) -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-sm backdrop-blur-md bg-white/95">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            
+            <!-- Brand Logo & Status -->
+            <div class="flex items-center justify-between w-full sm:w-auto">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-sky-500 flex items-center justify-center text-white text-lg sm:text-xl shadow-md shadow-blue-500/20 shrink-0">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight">Dépôt de Projets</h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Portail Universitaire Confidentiel</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Active Badge -->
+                <span id="teacherBadge" class="hidden px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold border border-emerald-200">
+                    <i class="fa-solid fa-circle text-[6px] mr-1 text-emerald-500"></i> Prof Active
+                </span>
+            </div>
+
+            <!-- TOP TAB SWITCHER (DESKTOP & MOBILE EN HAUT) -->
+            <div class="flex items-center gap-1.5 p-1 bg-slate-100/80 rounded-2xl border border-slate-200/70 w-full sm:w-auto">
+                <button id="studentTabBtn" onclick="switchTab('student')" class="flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200/60 touch-btn">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                    <span>Espace Étudiant</span>
+                </button>
+                <button id="teacherTabBtn" onclick="openTeacherAuthModal()" class="flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 touch-btn">
+                    <i class="fa-solid fa-user-shield text-sm"></i>
+                    <span>Espace Enseignante</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex-grow w-full">
+
+        <!-- Mobile & Desktop Confidentiality Banner -->
+        <div id="privacyNote" class="mb-5 sm:mb-8 bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 text-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-xl shadow-slate-900/10 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0 text-emerald-400">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm sm:text-base text-white flex items-center gap-2">
+                        Dépôt 100% Confidentiel & Sécurisé
+                    </h3>
+                    <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                        Chaque projet est strictement privé. Les autres groupes ne peuvent en aucun cas consulter vos travaux.
+                    </p>
+                </div>
+            </div>
+            <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-[11px] font-bold self-stretch sm:self-auto text-center shrink-0">
+                <i class="fa-solid fa-shield-halved mr-1"></i> Réservé à l'enseignante
+            </div>
+        </div>
+
+        <!-- ================= SECTION ÉTUDIANT (FORMULAIRE DE DÉPÔT) ================= -->
+        <section id="studentView" class="space-y-6">
+            
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md sm:shadow-xl overflow-hidden">
+                
+                <!-- Card Header -->
+                <div class="bg-slate-900 text-white p-4 sm:p-8">
+                    <div class="flex items-center justify-between">
+                        <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-[11px] font-extrabold uppercase tracking-wider border border-blue-500/30">Formulaire de Soumission</span>
+                        <span class="text-xs text-slate-400"><i class="fa-solid fa-clock mr-1"></i> Accès rapide</span>
+                    </div>
+                    <h2 class="text-lg sm:text-2xl font-black mt-2">Nouveau Dépôt de Projet</h2>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Remplissez les informations du groupe, les coordonnées des membres et joignez votre travail.</p>
+                </div>
+
+                <!-- Form -->
+                <form id="submissionForm" onsubmit="handleFormSubmit(event)" class="p-4 sm:p-8 space-y-6 sm:space-y-8">
+                    
+                    <!-- STEP 1: Chef & Groupe -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                            <span class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-black">1</span>
+                            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Groupe & Chef de Projet</h3>
+                        </div>
+
+                        <!-- Grid Stacked on Mobile -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                            
+                            <!-- Nom du Groupe -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nom du Groupe <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-people-group"></i></span>
+                                    <input type="text" id="groupName" required placeholder="Ex: Groupe Alpha" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition font-medium text-slate-800 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Chef Nom & Prénom -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Chef de Groupe (Nom & Prénom) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-user-tie"></i></span>
+                                    <input type="text" id="leaderName" required placeholder="Nom & Prénom du chef" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition font-medium text-slate-800 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Chef Téléphone -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Téléphone du Chef <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-phone"></i></span>
+                                    <input type="tel" id="leaderPhone" required placeholder="Ex: 20 123 456" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition font-medium text-slate-800 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Chef Email -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Adresse E-mail du Chef <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-envelope"></i></span>
+                                    <input type="email" id="leaderEmail" required placeholder="chef@etudiant.tn" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition font-medium text-slate-800 text-sm">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Membres Dynamiques -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-black">2</span>
+                                <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Membres du Groupe</h3>
+                            </div>
+                            <button type="button" onclick="addMemberInput()" class="px-3 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 touch-btn">
+                                <i class="fa-solid fa-user-plus"></i> <span class="hidden sm:inline">Ajouter un membre</span><span class="sm:hidden">Ajouter</span>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic List -->
+                        <div id="membersContainer" class="space-y-3">
+                            <!-- Injected via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Type de Rendu & Fichier -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                            <span class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-black">3</span>
+                            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Type de Rendu & Fichier</h3>
+                        </div>
+
+                        <!-- Selector Grid 2x2 on Mobile -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                            
+                            <label class="cursor-pointer">
+                                <input type="radio" name="submissionType" value="pdf" checked onclick="toggleSubmissionInput('pdf')" class="peer sr-only">
+                                <div class="p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50/60 peer-checked:text-blue-700 transition flex flex-col items-center gap-1.5 touch-btn justify-center">
+                                    <i class="fa-solid fa-file-pdf text-xl sm:text-2xl text-red-500"></i>
+                                    <span class="text-xs font-extrabold">PDF</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="submissionType" value="ppt" onclick="toggleSubmissionInput('ppt')" class="peer sr-only">
+                                <div class="p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50/60 peer-checked:text-blue-700 transition flex flex-col items-center gap-1.5 touch-btn justify-center">
+                                    <i class="fa-solid fa-file-powerpoint text-xl sm:text-2xl text-orange-500"></i>
+                                    <span class="text-xs font-extrabold">PowerPoint</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="submissionType" value="video" onclick="toggleSubmissionInput('video')" class="peer sr-only">
+                                <div class="p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50/60 peer-checked:text-blue-700 transition flex flex-col items-center gap-1.5 touch-btn justify-center">
+                                    <i class="fa-solid fa-file-video text-xl sm:text-2xl text-purple-500"></i>
+                                    <span class="text-xs font-extrabold">Vidéo</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="submissionType" value="link" onclick="toggleSubmissionInput('link')" class="peer sr-only">
+                                <div class="p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50/60 peer-checked:text-blue-700 transition flex flex-col items-center gap-1.5 touch-btn justify-center">
+                                    <i class="fa-solid fa-link text-xl sm:text-2xl text-emerald-500"></i>
+                                    <span class="text-xs font-extrabold">Lien Web</span>
+                                </div>
+                            </label>
+
+                        </div>
+
+                        <!-- Dropzone Container -->
+                        <div class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200/80">
+                            
+                            <!-- File Drag Drop Zone -->
+                            <div id="fileUploadContainer" class="space-y-3">
+                                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-5 sm:p-8 text-center bg-white cursor-pointer hover:border-blue-500 transition relative" onclick="document.getElementById('fileInput').click()">
+                                    <input type="file" id="fileInput" onchange="handleFileSelect(event)" class="hidden">
+                                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-2">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    </div>
+                                    <p class="font-extrabold text-slate-800 text-xs sm:text-sm" id="uploadTitle">Cliquez ici pour choisir le fichier</p>
+                                    <p class="text-[11px] text-slate-400 mt-1" id="uploadSubtitle">PDF supporté (Max 50 Mo)</p>
+                                </div>
+
+                                <div id="fileInfo" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        <i class="fa-solid fa-file-circle-check text-blue-600 text-xl shrink-0"></i>
+                                        <div class="truncate">
+                                            <p class="text-xs font-bold text-blue-950 truncate" id="fileNameDisplay">fichier.pdf</p>
+                                            <p class="text-[10px] text-blue-600 font-semibold" id="fileSizeDisplay">2.4 MB</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="removeSelectedFile()" class="text-red-500 hover:text-red-700 p-2 shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Link Input Area -->
+                            <div id="linkInputContainer" class="hidden space-y-2">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider" id="linkInputLabel">Lien Web du Travail (URL)</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-globe"></i></span>
+                                    <input type="url" id="submissionLink" placeholder="https://github.com/... ou https://drive.google.com/..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none font-medium text-slate-800 text-sm">
+                                </div>
+                                <p class="text-[11px] text-slate-400">Lien direct vers votre projet GitHub, Canva, Figma ou Google Drive.</p>
+                            </div>
+
+                            <!-- Remarques -->
+                            <div class="mt-4">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Remarque pour l'enseignante (Optionnel)</label>
+                                <textarea id="submissionNotes" rows="2" placeholder="Précisez toute information utile..." class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none text-xs text-slate-800 font-medium"></textarea>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Submit Touch Button -->
+                    <div class="pt-2">
+                        <button type="submit" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 active:scale-[0.99] transition text-sm flex items-center justify-center gap-2 touch-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Envoyer et Valider le Dépôt</span>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SECTION ENSEIGNANTE (TABLEAU DE BORD) ================= -->
+        <section id="teacherView" class="hidden space-y-4 sm:space-y-6">
+            
+            <!-- Dashboard Title Card -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[11px] font-bold">Espace Enseignante</span>
+                        <span class="text-xs text-slate-400">Accès Sécurisé</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Évaluations & Projets Déposés</h2>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="exportToCSV()" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 touch-btn">
+                        <i class="fa-solid fa-file-excel"></i> CSV
+                    </button>
+                    <button onclick="lockTeacherMode()" class="flex-1 sm:flex-none px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 touch-btn">
+                        <i class="fa-solid fa-lock"></i> Verrouiller
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center sm:text-left">
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase">Total Groupes</p>
+                    <h3 id="statTotalGroups" class="text-lg sm:text-2xl font-black text-slate-900 mt-0.5">0</h3>
+                </div>
+                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center sm:text-left">
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase">Documents</p>
+                    <h3 id="statTotalDocs" class="text-lg sm:text-2xl font-black text-slate-900 mt-0.5">0</h3>
+                </div>
+                <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center sm:text-left">
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase">Vidéos / Liens</p>
+                    <h3 id="statTotalLinks" class="text-lg sm:text-2xl font-black text-slate-900 mt-0.5">0</h3>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row gap-2.5 sm:gap-4">
+                <div class="relative flex-grow">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" id="searchInput" oninput="renderTeacherView()" placeholder="Rechercher un groupe, chef, membre, email..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white outline-none text-xs text-slate-800 font-medium">
+                </div>
+
+                <select id="filterType" onchange="renderTeacherView()" class="bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none text-slate-700">
+                    <option value="all">Tous les types de rendu</option>
+                    <option value="pdf">Fichiers PDF</option>
+                    <option value="ppt">PowerPoint (PPTX)</option>
+                    <option value="video">Vidéos</option>
+                    <option value="link">Liens Web</option>
+                </select>
+            </div>
+
+            <!-- MOBILE CARDS CONTAINER (< md) -->
+            <div id="mobileCardsContainer" class="md:hidden space-y-3">
+                <!-- Mobile Cards Injected by JS -->
+            </div>
+
+            <!-- DESKTOP TABLE CONTAINER (>= md) -->
+            <div class="hidden md:block bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
+                                <th class="p-4">Groupe & Chef</th>
+                                <th class="p-4">Membres</th>
+                                <th class="p-4">Type & Fichier</th>
+                                <th class="p-4">Date</th>
+                                <th class="p-4">Note /20</th>
+                                <th class="p-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacherTableBody" class="divide-y divide-slate-100 text-xs">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden p-8 sm:p-12 text-center bg-white rounded-2xl border border-slate-200">
+                <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-2xl mx-auto mb-2">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <p class="font-extrabold text-slate-800 text-sm">Aucun projet trouvé</p>
+                <p class="text-xs text-slate-400 mt-0.5">Les soumissions enregistrées apparaîtront ici.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL 1: Authentification Enseignante (Code PIN) -->
+    <div id="teacherAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border border-slate-100 relative bottom-sheet">
+            <button onclick="closeTeacherAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <div class="text-center space-y-2 mb-5">
+                <div class="w-14 h-14 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-blue-100">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-lg font-black text-slate-900">Espace Enseignante</h3>
+                <p class="text-xs text-slate-500">Saisissez votre code PIN pour accéder au tableau de bord.</p>
+            </div>
+
+            <form onsubmit="verifyTeacherPassword(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Code PIN </label>
+                    <input type="password" id="teacherPasswordInput" required placeholder="••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none font-black text-center tracking-widest text-xl">
+                </div>
+                <p id="authErrorMsg" class="text-xs text-red-500 font-bold hidden text-center">Code PIN incorrect !</p>
+                <button type="submit" class="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 text-sm touch-btn">
+                    Accéder au Tableau de Bord
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- MODAL 2: Confirmation de Dépôt Réussi -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl text-center space-y-4 border border-slate-100 bottom-sheet">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-slate-900">Projet Déposé ! 🎉</h3>
+                <p class="text-xs text-slate-600 mt-1">Votre travail a bien été enregistré en toute sécurité.</p>
+            </div>
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-left text-xs space-y-1.5">
+                <p><span class="font-bold text-slate-500">Groupe :</span> <span id="modalGroupName" class="font-bold text-slate-900">---</span></p>
+                <p><span class="font-bold text-slate-500">Chef :</span> <span id="modalLeaderName" class="font-semibold text-slate-800">---</span></p>
+                <p><span class="font-bold text-slate-500">Email Chef :</span> <span id="modalLeaderEmail" class="font-semibold text-blue-600">---</span></p>
+                <p><span class="font-bold text-emerald-600"><i class="fa-solid fa-lock mr-1"></i> Confidentialité :</span> Visible uniquement par l'enseignante.</p>
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition text-sm touch-btn">
+                Fermer
+            </button>
+        </div>
+    </div>
+
+
+    <!-- MODAL 3: Détails des Membres -->
+    <div id="detailsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 relative bottom-sheet max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+                <h3 class="text-base font-bold text-slate-900">Fiche du Groupe</h3>
+                <button onclick="closeDetailsModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="detailsContent" class="space-y-3 overflow-y-auto py-3 flex-grow text-xs">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL 4: Notation & Évaluation -->
+    <div id="gradeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 relative bottom-sheet">
+            <button onclick="closeGradeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-base font-extrabold text-slate-900 mb-1">Évaluation du Projet</h3>
+            <p class="text-xs text-slate-500 mb-4" id="gradeModalGroupName">Groupe : ---</p>
+            
+            <form onsubmit="saveGrade(event)" class="space-y-4">
+                <input type="hidden" id="gradeSubmissionId">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Note Attribuée (/20)</label>
+                    <input type="number" step="0.25" min="0" max="20" id="gradeInput" placeholder="Ex: 16.5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-base">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Remarques & Remontées</label>
+                    <textarea id="feedbackInput" rows="3" placeholder="Avis sur la qualité du travail..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none text-xs text-slate-800 font-medium"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition text-sm touch-btn">
+                    Enregistrer l'évaluation
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const STORAGE_KEY = 'group_submissions_mobile_v6';
+        let isTeacherAuthenticated = false;
+        let selectedFileBase64 = null;
+        let selectedFileName = '';
+        let selectedFileSize = '';
+
+        // Initial Demo Data with mandatory emails for members
+        const initialSampleData = [
+            {
+                id: 'sub_1',
+                groupName: 'Groupe Alpha (Design Web)',
+                leaderName: 'Aymen Mansouri',
+                leaderPhone: '+216 22 111 222',
+                leaderEmail: 'aymen.mansouri@etudiant.tn',
+                members: [
+                    { name: 'Sarra Ben Ali', phone: '+216 98 333 444', email: 'sarra.benali@etudiant.tn' },
+                    { name: 'Mohamed Triki', phone: '+216 55 777 888', email: 'mohamed.triki@etudiant.tn' }
+                ],
+                submissionType: 'pdf',
+                fileData: null,
+                fileName: 'Rapport_Projet_Alpha.pdf',
+                fileSize: '3.4 MB',
+                submissionLink: '',
+                notes: 'Veuillez trouver ci-joint notre rapport complet.',
+                timestamp: '2026-10-20 14:30',
+                grade: '17',
+                feedback: 'Excellent travail, très clair et complet !'
+            },
+            {
+                id: 'sub_2',
+                groupName: 'Tech Masters',
+                leaderName: 'Sonia Gharbi',
+                leaderPhone: '+216 24 555 666',
+                leaderEmail: 'sonia.gharbi@etudiant.tn',
+                members: [
+                    { name: 'Youssef Chaabane', phone: '+216 50 123 456', email: 'youssef.chaabane@etudiant.tn' }
+                ],
+                submissionType: 'ppt',
+                fileData: null,
+                fileName: 'Presentation_Projet.pptx',
+                fileSize: '8.1 MB',
+                submissionLink: '',
+                notes: 'Présentation de 15 diapositives.',
+                timestamp: '2026-10-20 16:15',
+                grade: '',
+                feedback: ''
+            }
+        ];
+
+        function getSubmissions() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (!data) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(initialSampleData));
+                return initialSampleData;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveSubmissions(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Add initial member input on load
+            addMemberInput();
+        });
+
+        // --- DYNAMIC MEMBERS INPUT (WITH EMAIL FIELD) ---
+        function addMemberInput() {
+            const container = document.getElementById('membersContainer');
+            const memberCount = container.children.length + 1;
+
+            const div = document.createElement('div');
+            div.className = 'member-row p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2';
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Membre ${memberCount}</span>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-red-500 hover:text-red-700 text-xs font-bold p-1"><i class="fa-solid fa-trash-can mr-1"></i> Supprimer</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input type="text" placeholder="Nom & Prénom *" required class="member-name w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 font-medium">
+                    <input type="tel" placeholder="N° Téléphone *" required class="member-phone w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 font-medium">
+                    <input type="email" placeholder="Adresse E-mail *" required class="member-email w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600 font-medium">
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // --- TOGGLE SUBMISSION TYPE ---
+        function toggleSubmissionInput(type) {
+            const fileContainer = document.getElementById('fileUploadContainer');
+            const linkContainer = document.getElementById('linkInputContainer');
+            const uploadSubtitle = document.getElementById('uploadSubtitle');
+
+            if (type === 'link') {
+                fileContainer.classList.add('hidden');
+                linkContainer.classList.remove('hidden');
+                document.getElementById('linkInputLabel').innerText = 'Lien Web du projet (GitHub / Canva / Google Drive / URL)';
+            } else if (type === 'video') {
+                fileContainer.classList.remove('hidden');
+                linkContainer.classList.remove('hidden');
+                uploadSubtitle.innerText = 'Fichier vidéo (MP4/WebM) ou insérez le lien ci-dessous.';
+                document.getElementById('linkInputLabel').innerText = 'Ou collez le lien de la vidéo (YouTube / Drive)';
+            } else {
+                fileContainer.classList.remove('hidden');
+                linkContainer.classList.add('hidden');
+                if (type === 'pdf') {
+                    uploadSubtitle.innerText = 'PDF supporté (Max 50 Mo)';
+                } else if (type === 'ppt') {
+                    uploadSubtitle.innerText = 'PPT / PPTX (PowerPoint)';
+                }
+            }
+        }
+
+        // --- FILE SELECTION ---
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedFileName = file.name;
+            selectedFileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+            document.getElementById('fileNameDisplay').innerText = selectedFileName;
+            document.getElementById('fileSizeDisplay').innerText = selectedFileSize;
+            document.getElementById('fileInfo').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                selectedFileBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedFile() {
+            selectedFileBase64 = null;
+            selectedFileName = '';
+            selectedFileSize = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').classList.add('hidden');
+        }
+
+        // --- FORM SUBMIT ---
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const groupName = document.getElementById('groupName').value.trim();
+            const leaderName = document.getElementById('leaderName').value.trim();
+            const leaderPhone = document.getElementById('leaderPhone').value.trim();
+            const leaderEmail = document.getElementById('leaderEmail').value.trim();
+            const notes = document.getElementById('submissionNotes').value.trim();
+            const selectedType = document.querySelector('input[name="submissionType"]:checked').value;
+            const linkVal = document.getElementById('submissionLink').value.trim();
+
+            if (selectedType !== 'link' && !selectedFileBase64 && !linkVal) {
+                alert('Veuillez sélectionner un fichier ou fournir un lien web pour votre projet !');
+                return;
+            }
+
+            const memberRows = document.querySelectorAll('.member-row');
+            const members = [];
+            let memberValidationError = false;
+
+            memberRows.forEach(row => {
+                const name = row.querySelector('.member-name').value.trim();
+                const phone = row.querySelector('.member-phone').value.trim();
+                const email = row.querySelector('.member-email').value.trim();
+
+                if (name || phone || email) {
+                    if (!name || !phone || !email) {
+                        memberValidationError = true;
+                    } else {
+                        members.push({ name, phone, email });
+                    }
+                }
+            });
+
+            if (memberValidationError) {
+                alert('Veuillez remplir le nom, le numéro de téléphone et l\'adresse e-mail pour tous les membres ajoutés.');
+                return;
+            }
+
+            const newSubmission = {
+                id: 'sub_' + Date.now(),
+                groupName,
+                leaderName,
+                leaderPhone,
+                leaderEmail,
+                members,
+                submissionType: selectedType,
+                fileData: selectedFileBase64,
+                fileName: selectedFileName || (selectedType === 'link' ? 'Lien Web' : 'Fichier joint'),
+                fileSize: selectedFileSize,
+                submissionLink: linkVal,
+                notes,
+                timestamp: new Date().toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }),
+                grade: '',
+                feedback: ''
+            };
+
+            const submissions = getSubmissions();
+            submissions.unshift(newSubmission);
+            saveSubmissions(submissions);
+
+            document.getElementById('modalGroupName').innerText = groupName;
+            document.getElementById('modalLeaderName').innerText = leaderName;
+            document.getElementById('modalLeaderEmail').innerText = leaderEmail;
+            document.getElementById('successModal').classList.remove('hidden');
+
+            document.getElementById('submissionForm').reset();
+            removeSelectedFile();
+            toggleSubmissionInput('pdf');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        // --- NAVIGATION TABS ---
+        function switchTab(tab) {
+            const studentView = document.getElementById('studentView');
+            const teacherView = document.getElementById('teacherView');
+            const privacyNote = document.getElementById('privacyNote');
+
+            const studentBtn = document.getElementById('studentTabBtn');
+            const teacherBtn = document.getElementById('teacherTabBtn');
+
+            if (tab === 'student') {
+                studentView.classList.remove('hidden');
+                privacyNote.classList.remove('hidden');
+                teacherView.classList.add('hidden');
+
+                studentBtn.className = "flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200/60 touch-btn";
+                teacherBtn.className = "flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 touch-btn";
+            } else if (tab === 'teacher') {
+                studentView.classList.add('hidden');
+                privacyNote.classList.add('hidden');
+                teacherView.classList.remove('hidden');
+
+                teacherBtn.className = "flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm border border-slate-200/60 touch-btn";
+                studentBtn.className = "flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs transition-all duration-200 flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 touch-btn";
+
+                renderTeacherView();
+            }
+        }
+
+        function openTeacherAuthModal() {
+            if (isTeacherAuthenticated) {
+                switchTab('teacher');
+            } else {
+                document.getElementById('teacherAuthModal').classList.remove('hidden');
+                document.getElementById('teacherPasswordInput').focus();
+            }
+        }
+
+        function closeTeacherAuthModal() {
+            document.getElementById('teacherAuthModal').classList.add('hidden');
+            document.getElementById('authErrorMsg').classList.add('hidden');
+        }
+
+        function verifyTeacherPassword(event) {
+            event.preventDefault();
+            const pass = document.getElementById('teacherPasswordInput').value;
+            if (pass === '1234') {
+                isTeacherAuthenticated = true;
+                document.getElementById('teacherBadge').classList.remove('hidden');
+                closeTeacherAuthModal();
+                switchTab('teacher');
+            } else {
+                document.getElementById('authErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        function lockTeacherMode() {
+            isTeacherAuthenticated = false;
+            document.getElementById('teacherBadge').classList.add('hidden');
+            switchTab('student');
+        }
+
+        // --- RENDER TEACHER VIEW ---
+        function renderTeacherView() {
+            const submissions = getSubmissions();
+            const mobileCardsContainer = document.getElementById('mobileCardsContainer');
+            const teacherTableBody = document.getElementById('teacherTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+
+            mobileCardsContainer.innerHTML = '';
+            teacherTableBody.innerHTML = '';
+
+            const filtered = submissions.filter(item => {
+                const matchMembers = item.members.some(m => 
+                    m.name.toLowerCase().includes(searchVal) || 
+                    (m.email && m.email.toLowerCase().includes(searchVal))
+                );
+
+                const matchSearch = item.groupName.toLowerCase().includes(searchVal) ||
+                                    item.leaderName.toLowerCase().includes(searchVal) ||
+                                    (item.leaderEmail && item.leaderEmail.toLowerCase().includes(searchVal)) ||
+                                    (item.leaderPhone && item.leaderPhone.toLowerCase().includes(searchVal)) ||
+                                    matchMembers;
+
+                const matchType = filterType === 'all' || item.submissionType === filterType;
+                return matchSearch && matchType;
+            });
+
+            // Stats
+            document.getElementById('statTotalGroups').innerText = submissions.length;
+            document.getElementById('statTotalDocs').innerText = submissions.filter(s => s.submissionType === 'pdf' || s.submissionType === 'ppt').length;
+            document.getElementById('statTotalLinks').innerText = submissions.filter(s => s.submissionType === 'link' || s.submissionType === 'video').length;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(sub => {
+                let badgeHTML = '';
+                if (sub.submissionType === 'pdf') {
+                    badgeHTML = `<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-lg text-[10px] font-bold border border-red-100 inline-flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> PDF</span>`;
+                } else if (sub.submissionType === 'ppt') {
+                    badgeHTML = `<span class="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-lg text-[10px] font-bold border border-orange-100 inline-flex items-center gap-1"><i class="fa-solid fa-file-powerpoint"></i> PPTX</span>`;
+                } else if (sub.submissionType === 'video') {
+                    badgeHTML = `<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-lg text-[10px] font-bold border border-purple-100 inline-flex items-center gap-1"><i class="fa-solid fa-video"></i> Vidéo</span>`;
+                } else {
+                    badgeHTML = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-100 inline-flex items-center gap-1"><i class="fa-solid fa-globe"></i> Lien</span>`;
+                }
+
+                let fileBtn = '';
+                if (sub.fileData) {
+                    fileBtn = `<a href="${sub.fileData}" download="${sub.fileName}" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-1"><i class="fa-solid fa-download"></i> Télécharger</a>`;
+                } else if (sub.submissionLink) {
+                    fileBtn = `<a href="${sub.submissionLink}" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir</a>`;
+                }
+
+                // MOBILE CARD VIEW (< md)
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                        <div>
+                            <span class="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">${sub.timestamp}</span>
+                            <h4 class="font-extrabold text-slate-900 text-sm leading-snug">${sub.groupName}</h4>
+                        </div>
+                        <div>${badgeHTML}</div>
+                    </div>
+
+                    <div class="space-y-1 text-xs text-slate-600">
+                        <p><span class="font-bold text-slate-800"><i class="fa-solid fa-user-tie text-blue-600 mr-1"></i> Chef :</span> ${sub.leaderName}</p>
+                        <p><span class="font-bold text-slate-800"><i class="fa-solid fa-phone text-emerald-600 mr-1"></i> Tel :</span> ${sub.leaderPhone}</p>
+                        <p><span class="font-bold text-slate-800"><i class="fa-solid fa-envelope text-blue-500 mr-1"></i> Email :</span> ${sub.leaderEmail || 'N/A'}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">Note /20</span>
+                            ${sub.grade ? `<span class="font-black text-amber-600 text-sm">${sub.grade} / 20</span>` : `<span class="text-xs text-slate-400 font-semibold">Non noté</span>`}
+                        </div>
+                        <button onclick="openGradeModal('${sub.id}')" class="px-3 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold shadow-sm">
+                            <i class="fa-solid fa-star mr-1"></i> ${sub.grade ? 'Modifier' : 'Noter'}
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 gap-2">
+                        <button onclick="openDetailsModal('${sub.id}')" class="text-xs font-bold text-blue-600 hover:underline">
+                            <i class="fa-solid fa-users mr-1"></i> Membres (${sub.members.length + 1})
+                        </button>
+                        <div class="flex items-center gap-2">
+                            ${fileBtn}
+                            <button onclick="deleteSubmission('${sub.id}')" class="p-2 text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                        </div>
+                    </div>
+                `;
+                mobileCardsContainer.appendChild(card);
+
+                // DESKTOP TABLE ROW (>= md)
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition';
+                tr.innerHTML = `
+                    <td class="p-4">
+                        <div class="font-bold text-slate-900">${sub.groupName}</div>
+                        <div class="text-slate-600"><i class="fa-solid fa-user-tie text-blue-600 mr-1"></i>${sub.leaderName}</div>
+                        <div class="text-slate-400 text-[11px]"><i class="fa-solid fa-envelope mr-1"></i>${sub.leaderEmail || 'N/A'}</div>
+                    </td>
+                    <td class="p-4">
+                        <button onclick="openDetailsModal('${sub.id}')" class="font-bold text-blue-600 hover:underline">
+                            ${sub.members.length + 1} membre(s)
+                        </button>
+                    </td>
+                    <td class="p-4">
+                        ${badgeHTML}
+                        <div class="text-[11px] text-slate-400 mt-1 truncate max-w-[120px]">${sub.fileName || sub.submissionLink}</div>
+                    </td>
+                    <td class="p-4 text-slate-500 font-medium">${sub.timestamp}</td>
+                    <td class="p-4">
+                        ${sub.grade ? `<span class="px-2 py-1 bg-amber-100 text-amber-900 font-black rounded-lg">${sub.grade}/20</span>` : `<span class="text-slate-400">--</span>`}
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            ${fileBtn}
+                            <button onclick="openGradeModal('${sub.id}')" class="p-1.5 text-slate-400 hover:text-amber-600"><i class="fa-solid fa-star"></i></button>
+                            <button onclick="deleteSubmission('${sub.id}')" class="p-1.5 text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                teacherTableBody.appendChild(tr);
+            });
+        }
+
+        // --- MEMBER DETAILS MODAL WITH EMAIL DISPLAY ---
+        function openDetailsModal(id) {
+            const submissions = getSubmissions();
+            const item = submissions.find(s => s.id === id);
+            if (!item) return;
+
+            const container = document.getElementById('detailsContent');
+            container.innerHTML = `
+                <div class="p-3.5 bg-blue-50/70 rounded-2xl border border-blue-100 space-y-1">
+                    <span class="text-[10px] font-black text-blue-700 uppercase tracking-wider">Chef de Groupe</span>
+                    <p class="text-sm font-black text-slate-900">${item.leaderName}</p>
+                    <p class="text-slate-600"><i class="fa-solid fa-phone text-emerald-600 mr-1"></i> ${item.leaderPhone}</p>
+                    <p class="text-slate-600"><i class="fa-solid fa-envelope text-blue-600 mr-1"></i> ${item.leaderEmail || 'Non renseigné'}</p>
+                </div>
+                <h4 class="font-extrabold text-slate-800 pt-2">Autres membres de l'équipe (${item.members.length}) :</h4>
+            `;
+
+            if (item.members.length === 0) {
+                container.innerHTML += `<p class="text-slate-400 italic">Aucun autre membre ajouté.</p>`;
+            } else {
+                item.members.forEach((m, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-0.5';
+                    div.innerHTML = `
+                        <p class="font-bold text-slate-900">${idx + 1}. ${m.name}</p>
+                        <p class="text-slate-500"><i class="fa-solid fa-phone text-emerald-600 mr-1"></i> ${m.phone || 'N/A'}</p>
+                        <p class="text-slate-500"><i class="fa-solid fa-envelope text-blue-600 mr-1"></i> ${m.email || 'N/A'}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            document.getElementById('detailsModal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').classList.add('hidden');
+        }
+
+        // --- GRADING MODAL ---
+        function openGradeModal(id) {
+            const submissions = getSubmissions();
+            const item = submissions.find(s => s.id === id);
+            if (!item) return;
+
+            document.getElementById('gradeSubmissionId').value = item.id;
+            document.getElementById('gradeModalGroupName').innerText = `Groupe : ${item.groupName} (Chef : ${item.leaderName})`;
+            document.getElementById('gradeInput').value = item.grade || '';
+            document.getElementById('feedbackInput').value = item.feedback || '';
+
+            document.getElementById('gradeModal').classList.remove('hidden');
+        }
+
+        function closeGradeModal() {
+            document.getElementById('gradeModal').classList.add('hidden');
+        }
+
+        function saveGrade(event) {
+            event.preventDefault();
+            const id = document.getElementById('gradeSubmissionId').value;
+            const grade = document.getElementById('gradeInput').value;
+            const feedback = document.getElementById('feedbackInput').value.trim();
+
+            let submissions = getSubmissions();
+            submissions = submissions.map(s => {
+                if (s.id === id) {
+                    return { ...s, grade, feedback };
+                }
+                return s;
+            });
+
+            saveSubmissions(submissions);
+            closeGradeModal();
+            renderTeacherView();
+        }
+
+        // --- DELETE SUBMISSION ---
+        function deleteSubmission(id) {
+            if (confirm('Voulez-vous vraiment supprimer ce projet ?')) {
+                let submissions = getSubmissions();
+                submissions = submissions.filter(s => s.id !== id);
+                saveSubmissions(submissions);
+                renderTeacherView();
+            }
+        }
+
+        // --- EXPORT CSV INCLUDING MEMBER EMAILS ---
+        function exportToCSV() {
+            const submissions = getSubmissions();
+            if (submissions.length === 0) {
+                alert('Aucune donnée à exporter.');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Nom du Groupe,Chef de Groupe,Tel Chef,Email Chef,Membres (Nom / Tel / Email),Type,Date,Fichier ou Lien,Note,Remarques Enseignante\n";
+
+            submissions.forEach(sub => {
+                const memberDetails = sub.members.map(m => `${m.name} (Tel: ${m.phone || 'N/A'}, Email: ${m.email || 'N/A'})`).join(' | ');
+                const row = [
+                    `"${sub.groupName}"`,
+                    `"${sub.leaderName}"`,
+                    `"${sub.leaderPhone}"`,
+                    `"${sub.leaderEmail || ''}"`,
+                    `"${memberDetails}"`,
+                    `"${sub.submissionType}"`,
+                    `"${sub.timestamp}"`,
+                    `"${sub.submissionLink || sub.fileName}"`,
+                    `"${sub.grade || ''}"`,
+                    `"${sub.feedback ? sub.feedback.replace(/\n/g, ' ') : ''}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Export_Projets_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
